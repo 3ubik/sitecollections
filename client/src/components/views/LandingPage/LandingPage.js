@@ -11,7 +11,7 @@ function LandingPage(props) {
     }
     return (
        
-        <div className="collections">
+        <div >
         <Menu mode="horizontal">
             <Menu.Item key="items">
                 <a href="/">Last added items</a>

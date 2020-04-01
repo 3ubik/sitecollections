@@ -1,4 +1,4 @@
-const proxy = require("https-proxy-middleware");
+const proxy = require("http-proxy-middleware");
 
 module.exports = function(app) {
 

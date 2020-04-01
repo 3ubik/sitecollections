@@ -11,11 +11,11 @@ const io = require("socket.io")(server)
 
 const config = require("./config/key");
 
-// const mongoose = require("mongoose");
-// mongoose
-//   .connect(config.mongoURI, { useNewUrlParser: true })
-//   .then(() => console.log("DB connected"))
-//   .catch(err => console.error(err));
+const mongoose = require("mongoose");
+mongoose
+  .connect(config.mongoURI, { useNewUrlParser: true })
+  .then(() => console.log("DB connected"))
+  .catch(err => console.error(err));
 const { Comment } = require("./models/Comment")
 const mongoose = require("mongoose");
 const connect = mongoose.connect(config.mongoURI,
@@ -46,11 +46,11 @@ io.on("connection", socket => {
   socket.on("Input Comment", msg => {
     connect.then(db => {
       try {
-        let comment = new Comment({ message: msg.chatMessage, sender: msg.userId, type: msg.type,itemId:msg.itemId })
+        let comment = new Comment({ message: msg.chatMessage, sender: msg.userId, type: msg.type, itemId: msg.itemId })
         comment.save((err, doc) => {
           if (err) return res.json({ success: false, err })
 
-          Comment.find({_id: doc._id,itemId:doc.itemId })
+          Comment.find({ _id: doc._id, itemId: doc.itemId })
             .populate("sender")
             .exec((err, doc) => {
               return io.emit("Output Comment", doc)

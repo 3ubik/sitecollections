@@ -17,7 +17,7 @@ export class ItemComments extends Component {
 
 
     componentDidMount() {
-        let server = "http://localhost:5000"
+        let server = "https://nzcollections.herokuapp.com"
 
         this.props.dispatch(getChats(this.props.match.params.itemId))
 

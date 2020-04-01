@@ -87,19 +87,3 @@ server.listen(port, () => {
   console.log(`Server Running at ${port}`)
 });
 
-/*async function start(){
-  try{
-      await mongoose.connect(config.get('mongoUri'),{
-          useNewUrlParser:true,
-           useUnifiedTopology:true,
-           useCreateIndex:true
-
-})
-app.listen(PORT ,()=> console.log("Сервер слушает..."))
-  }catch(e){
-      console.log("Server error", e.message)
-      process.exit(1)
-  }
-}
-
-start()*/

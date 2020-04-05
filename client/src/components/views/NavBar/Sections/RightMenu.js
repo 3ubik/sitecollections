@@ -8,12 +8,15 @@ import { useSelector } from "react-redux";
 
 function RightMenu(props) {
   const user = useSelector(state => state.user)
-
+  let id = null
+  if (user.userData) {
+    id = user.userData._id
+  }
   const logoutHandler = () => {
     axios.get(`${USER_SERVER}/logout`).then(response => {
       if (response.status === 200) {
         props.history.push("/login");
-        
+
       } else {
         alert('Log Out Failed')
       }
@@ -35,10 +38,10 @@ function RightMenu(props) {
     return (
       <Menu mode={props.mode}>
         <Menu.Item key="get">
-          <a href="/collections/get">My Collections</a>
+          <a href={`/collections/get/${id}`}>My Collections</a>
         </Menu.Item>
-         <Menu.Item key="upload">
-          <a href="/collections/upload">New Collection</a>
+        <Menu.Item key="upload">
+          <a href={`/collections/upload/${id}`}>New Collection</a>
         </Menu.Item>
         <Menu.Item key="logout">
           <a onClick={logoutHandler}>Logout</a>

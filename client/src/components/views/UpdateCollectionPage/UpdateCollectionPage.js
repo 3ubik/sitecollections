@@ -16,10 +16,10 @@ function UpdateCollectionPage(props) {
     useEffect(() => {
         Axios.get(`/api/collections/collection_by_id?&id=${collectionId}&type=single`)
             .then(response => {
-                setTitleValue(response.data[0].title)
-                setDescriptionValue(response.data[0].description)
-                setTopicValue(response.data[0].topic)
-                setImages(response.data[0].images)
+                setTitleValue(response.data.collection[0].title)
+                setDescriptionValue(response.data.collection[0].description)
+                setTopicValue(response.data.collection[0].topic)
+                setImages(response.data.collection[0].images)
             })
 
     }, [])
@@ -61,7 +61,7 @@ function UpdateCollectionPage(props) {
             return alert('fill all the fields first!')
         }
 
-        Axios.put(`/api/collections/collection_by_id?&id=${collectionId}&type=single`, variables)
+        Axios.put(`/api/collections/collection_by_id?&id=${collectionId}`, variables)
             .then(response => {
                 if (response.data.success) {
                     alert('Collection Successfully Updated')

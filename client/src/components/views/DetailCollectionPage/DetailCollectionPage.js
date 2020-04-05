@@ -8,9 +8,9 @@ function DetailCollection(props) {
     const collectionId = props.match.params.collectionId
     const [Collection, setCollection] = useState([])
     useEffect(() => {
-        Axios.get(`/api/collections/collection_by_id?&id=${collectionId}&type=single`)
+        Axios.get(`/api/collections/collection_by_id?&id=${collectionId}`)
             .then(response => {
-                setCollection(response.data[0])
+                setCollection(response.data.collection[0])
             })
     }, [])
 

@@ -1,5 +1,4 @@
 import React, {useEffect,useState }from 'react'
-import './CssUtils/Collections.css'
 import { Col, Card, Row } from 'antd';
 import Axios from 'axios'
 import ImageSlider from '../../../utils/ImageSlider';

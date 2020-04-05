@@ -32,7 +32,7 @@ function CollectionInfo(props) {
 
     const DeLeteCollection = () => {
 
-        Axios.delete(`/api/collections/collection_by_id?&id=${Collection._id}&type=single`)
+        Axios.delete(`/api/collections/collection_by_id?&id=${Collection._id}`)
             .then(response => {
                 if (response.data.success) {
                     alert('Collection Successfully Deleted')
@@ -64,19 +64,23 @@ function CollectionInfo(props) {
 
     const onAdd = (event) => {
         event.preventDefault();
+        if (!NameFields) {
+            return alert("Write name of your field!")
+        }
+
         const Newfield = {
             col: Collection._id,
             title: NameFields,
             type: Fields,
-            value:''
+            value: ''
         }
-        Axios.post(`/api/collections/collection_by_id?id=${Collection._id}&type=single`, Newfield)
+        Axios.post(`/api/collections/collection_by_id?id=${Collection._id}`, Newfield)
             .then(response => {
                 if (response.data.success) {
                     alert('Field Successfully Created')
                     window.location.href = `/collections/${Collection._id}`
                 } else {
-                    
+
                     alert(response.data.mes || response.data.err)
                 }
             })
@@ -95,10 +99,41 @@ function CollectionInfo(props) {
             <br />
             <br />
             <br />
+            <div style={{ display: 'flex' }}>
+
+                <Button style={{ marginRight: 10 }} onClick={DeLeteCollection}
+                >
+                    Delete Collection
+               </Button>
+
+
+                <Button style={{ marginRight: 10 }} onClick={update}
+
+                >
+                    Change Collection
+                  </Button>
+                <Button style={{ marginRight: 10 }} onClick={collectionItems}
+
+                >
+                    Items
+                 </Button>
+                <Button style={{ marginRight: 10 }} onClick={additem}
+
+                >
+                    AddItems
+                     </Button>
+            </div>
+            <br />
+            <br />
+            <br />
+
+
+
+
             <div>
                 <h2>Add fields to items</h2>
-                <label>Type of the field</label>
-                <select onChange={onTypeFieldsChange}>
+                <label style={{ marginRight: 10 }}>Type of the field</label>
+                <select  onChange={onTypeFieldsChange}>
                     {TypesOfFields.map(item => (
                         <option key={item.key} value={item.key}>{item.value}</option>
 
@@ -120,36 +155,6 @@ function CollectionInfo(props) {
                     Add field
                 </Button>
             </div>
-
-
-
-
-            <div style={{ display: 'flex', justifyContent: 'center' }}>
-
-                <Button style={{ margin: '20px' }} size="large" shape="round" type="danger"
-                    onClick={DeLeteCollection}
-                >
-                    Delete Collection
-                    </Button>
-
-
-                <Button style={{ margin: '20px' }} size="large" shape="round" type="danger" onClick={update}
-                
-                >
-                    Change Collection
-                    </Button>
-                <Button style={{ margin: '20px' }} size="large" shape="round" type="danger" onClick={collectionItems}
-
-                >
-                    Items
-                    </Button>
-                <Button style={{ margin: '20px' }} size="large" shape="round" type="danger" onClick={additem}
-
-                >
-                    AddItems
-                    </Button>
-            </div>
-
         </div>
     )
 }

@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react'
-import './CssUtils/Collections.css'
 import Axios from 'axios'
 import { Col, Card, Row } from 'antd';
 import moment from 'moment';
@@ -14,7 +13,7 @@ function LastAddedItems(props) {
         Axios.post("/api/collections/latestitems")
             .then(response => {
                 if (response.data.success) {
-                    console.log(response.data.items)
+                    
                     setItems(response.data.items.reverse())
                 } else {
                     alert('Failed to fectch product datas')

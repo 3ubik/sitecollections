@@ -13,7 +13,7 @@ function Like(props) {
             .then(response => {                
                 if (response.data.success) {                   
                     setLikes(response.data.likes.length)  
-                    console.log(window.localStorage.getItem('userId'))
+                    
                     if(response.data.userId){
                         response.data.likes.map(like => {                        
                             if (like.userId === response.data.userId) {

@@ -12,7 +12,7 @@ const userSchema = mongoose.Schema({
     email: {
         type:String,
         trim:true,
-        unique: 1 
+        unique: 1 ,
     },
     password: {
         type: String,
@@ -32,6 +32,10 @@ const userSchema = mongoose.Schema({
     },
     tokenExp :{
         type: Number
+    },
+    isBlocked:{
+    type: Boolean,
+    default: false
     }
 })
 

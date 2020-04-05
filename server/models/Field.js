@@ -10,6 +10,11 @@ const FieldSchema = mongoose.Schema({
         ref:'Collection'
         
     },
+    userId: {
+        type: Schema.Types.ObjectId,
+        ref:'User'
+        
+    },
     title: {
         type:String,
         maxlength: 50

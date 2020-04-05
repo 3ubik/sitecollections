@@ -1,19 +1,39 @@
 import React from 'react'
-import { Descriptions, Row} from 'antd';
+import TypeOfNewItem from './TypeofNewItem'
+import { Descriptions, Row, Form } from 'antd';
 
 function FieldsOfItem(props) {
-
+    var flag = false
+    if (props.flag) {
+        flag = props.flag
+    }
     const Fields = props.fields
-    
-    const getFields = () => {      
+
+    const getFields = () => {
 
         const children = [];
+        if (Fields.length == 0) children.push(
+            <Descriptions column={1} >
+                <Descriptions.Item> {"There is no more information"}</Descriptions.Item>
+            </Descriptions>
+        )
 
         for (let i = 0; i < Fields.length; i++) {
+            let value = Fields[i].value
+            if (Fields[i].value == "true") value = "yes"
+            if (Fields[i].value == "false") value = "no"
             children.push(
-                <Descriptions>
-                    <Descriptions.Item label={Fields[i].title}>{Fields[i].value} </Descriptions.Item>
-                </Descriptions>
+                <div>
+                    {flag ? (
+                        <Form.Item label={Fields[i].title}>
+                            <TypeOfNewItem valueOfField={Fields[i].value} i={i} typeOfField={Fields[i].type} itemId={props.id} />
+                        </Form.Item>
+                    ) : (
+                            <Descriptions column={1} >
+                                <Descriptions.Item label={Fields[i].title}>{Fields[i].value ? value : "There is no information"}</Descriptions.Item>
+                            </Descriptions>
+                        )}
+                </div>               
             );
         }
 

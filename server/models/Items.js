@@ -17,6 +17,11 @@ const ItemSchema = mongoose.Schema({
         type: Schema.Types.ObjectId,
         ref: 'Collection'
     },
+    userId: {
+        type: Schema.Types.ObjectId,
+        ref:'User'
+        
+    },
 
     fields: {
 

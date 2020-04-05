@@ -12,7 +12,6 @@ import UpdateCollectionPage from './views/UpdateCollectionPage/UpdateCollectionP
 import ItemAdd from './views/AddItemsPage/ItemAdd';
 import TypeofNewItem from './utils/TypeofNewItem';
 import ItemsOfCollection from './views/ItemsOfCollection/ItemsOfCollection';
-import UpdateItem from './views/UpdateItemPage/UpdateItemPage';
 import ItemComments from './utils/CommentsOfItem/ItemComments';
 
 
@@ -25,15 +24,14 @@ function App() {
           <Route exact path="/" component={Auth(LandingPage, null)} />
           <Route exact path="/login" component={Auth(LoginPage, false)} />
           <Route exact path="/register" component={Auth(RegisterPage, false)} />
-          <Route exact path="/collections/upload" component={Auth(UploadPage, true)} />
-          <Route exact path="/collections/get" component={Auth(MyCollectionsPage, null)} />                           
+          <Route exact path="/collections/upload/:userId" component={Auth(UploadPage, true)} />
+          <Route exact path="/collections/get/:userId" component={Auth(MyCollectionsPage, null)} />                           
           <Route exact path="/collections/:collectionId" component={Auth(DetailCollection, null)} />
           <Route exact path="/collections/update/:collectionId" component={Auth(UpdateCollectionPage, null)} />
           <Route exact path="/collections/itemadd/:collectionId" component={Auth(ItemAdd, null)} />
           <Route exact path="/collections/upDatefield/:collectionId" component={Auth(TypeofNewItem, null)} />
           <Route exact path="/collections/Additem/:collectionId" component={Auth(ItemAdd, null)} />
-          <Route exact path="/collections/itemsOfCollection/:collectionId" component={Auth(ItemsOfCollection, null)} />
-          <Route exact path="/collections/UpdateItem/:itemId" component={Auth(UpdateItem, null)} />
+          <Route exact path="/collections/itemsOfCollection/:collectionId" component={Auth(ItemsOfCollection, null)} />         
           <Route exact path="/collections/CommentsOfItem/:itemId" component={Auth(ItemComments, null)} /> 
           
           

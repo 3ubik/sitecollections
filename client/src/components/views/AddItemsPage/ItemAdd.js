@@ -25,7 +25,7 @@ const ItemAdd = (props) => {
             })
             Axios.get(`/api/collections/collection_by_id?id=${collectionId}`)
             .then(response => {
-                 setitems(response.data[0].items)              
+                 setitems(response.data.collection[0].items)              
                  
             })
     }, [])
@@ -97,7 +97,7 @@ const ItemAdd = (props) => {
             })
 
         if(!name || !Tag){
-            alert("Input name or tag")
+           return alert("Input name or tag")
         }        
         else{
         const NewItem = {

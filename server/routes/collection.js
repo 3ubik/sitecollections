@@ -3,6 +3,7 @@ const router = express.Router();
 const { Collection } = require("../models/Collection");
 const { Field } = require("../models/Field");
 const { Items } = require("../models/Items");
+const {Like} = require("../models/Like")
 
 const { auth } = require("../middleware/auth");
 
@@ -19,13 +20,15 @@ router.post("/uploadCollection", auth, (req, res) => {
 });
 
 router.get("/getCollections", auth, (req, res) => {
-    const writer = req.user._id
-    Collection.find({ writer })
-
+    if (req.user._id != req.query.id && req.user.role != 1){
+        return res.status(200).json({
+            success: false,
+            message: "You cannot get acces to this page, sorry"
+        })
+    }    
+    Collection.find({ writer : req.query.id })
         .exec((err, collections) => {
             if (err) return res.status(400).json({ success: false, err })
-
-
             res.status(200).json({ success: true, collections })
         })
 
@@ -38,8 +41,8 @@ router.get("/collection_by_id", (req, res) => {
     Collection.find({ '_id': { $in: collectionIds } })
         .populate('writer')
         .exec((err, collection) => {
-            if (err) return req.status(400).send(err)
-            return res.status(200).send(collection)
+            if (err) return res.status(400).send(err)
+            return res.status(200).send({ success: true, collection, writer: collection[0].writer })
         })
 });
 
@@ -47,37 +50,45 @@ router.delete("/collection_by_id", (req, res) => {
 
     let collectionIds = req.query.id
     Field.deleteMany({ col: collectionIds }, function (err, result) {
-        if (err) return req.status(400).json({ success: false, err })
+        if (err) return res.status(400).json({ success: false, err })
 
     })
-
-
+    Like.deleteMany({ collectionOfLike: collectionIds }, function (err, result) {
+        if (err) return res.status(400).json({ success: false, err })
+    });
     Items.deleteMany({ collect: collectionIds }, function (err, result) {
-        if (err) return req.status(400).json({ success: false, err })
+        if (err) return res.status(400).json({ success: false, err })
 
     })
     Collection.findOneAndDelete({ _id: collectionIds }, function (err, result) {
-        if (err) return req.status(400).json({ success: false, err })
+        if (err) return res.status(400).json({ success: false, err })
         return res.status(200).json({ success: true })
     })
 
 });
 router.delete("/item_by_id", (req, res) => {
     req.query.itemlenght--
-
-
-    let ItIds = req.query.id
-
-
-
-    Items.findOneAndDelete({ _id: ItIds }, function (err, result) {
-        if (err) return req.status(400).json({ success: false, err })
-        return res.status(200).json({ success: true })
-    })
+    
     Collection.updateOne({ _id: req.query.collectionId }, { $set: { items: req.query.itemlenght } }, function (err, result) {
-        if (err) return req.status(400).json({ success: false, err })
+        if (err) return res.status(400).json({ success: false, err })
 
     })
+    Like.deleteMany({ itemId: req.query.id })
+    .exec((err, r) => { if (err) return res.status(400).json({ success: false, err }) })
+    
+    Items.findOneAndDelete({ _id: req.query.id })
+        .exec((err, r) => {
+            if (err) return res.status(400).json({ success: false, err })
+            if (r) {
+                Items.find({ collect: r.collect })
+                    .exec((err, items) => {
+                        if (err) return res.status(400).json({ success: false, err })
+                        return res.status(200).json({ success: true, items })
+                    })
+            }
+        }
+        )
+    
 
 
 });
@@ -86,7 +97,7 @@ router.put("/collection_by_id", (req, res) => {
     let collectionIds = req.query.id
 
     Collection.updateOne({ _id: collectionIds }, { $set: { title: newcol.title, topic: newcol.topic, description: newcol.description, images: newcol.images } }, function (err, result) {
-        if (err) return req.status(400).json({ success: false, err })
+        if (err) return res.status(400).json({ success: false, err })
         return res.status(200).json({ success: true })
     })
 
@@ -128,7 +139,7 @@ router.post("/collection_by_id", (req, res) => {
 
             }
             else {
-                const mes = "Поле с таким именем уже существует"
+                const mes = "Field with this name exists "
                 return res.status(200).json({ success: false, mes })
             }
 
@@ -147,19 +158,17 @@ router.post("/Additem", (req, res) => {
 
             if (err) return res.status(400).json({ success: false, err })
         })
-    Field.updateMany({ col: req.body.collect }, { $set: { value: req.body.fields.value } })
-        .exec((err, fields) => {
-            if (err) return res.status(400).json({ success: false, err })
-        })
-
     const item = new Items(req.body)
-
-
     item.save((err) => {
         if (err) returnres.status(400).json({ success: false, err })
-        return res.status(200).json({ success: true })
+        Field.updateMany({ col: req.body.collect }, { $set: { value: req.body.fields.value } })
+        .exec((err, fields) => {
+            if (err) return res.status(400).json({ success: false, err })
+            return res.status(200).json({ success: true })
+        })
+        
     })
-
+    
 });
 
 router.get("/fields_by_id", (req, res) => {
@@ -206,24 +215,29 @@ router.put("/ItemupDatefield", auth, (req, res) => {
         )
 });
 router.post("/ItemupDatefield", auth, (req, res) => {
-    Items.updateOne({ _id: req.query.id }, { $set: { name: req.query.name, tag: req.query.tag } })
+   
+        Items.updateOne({ _id: req.query.id }, { $set: { name: req.query.name, tag: req.query.tag } })
         .exec((err, e) => {
             if (err) return res.status(400).json({ success: false, err })
-            return res.status(200).json({ success: true })
+            Items.find({ collect: req.query.col })
+                .exec((err, items) => {
+                    if (err) return res.status(400).json({ success: false, err })
+                    return res.status(200).json({ success: true, items })
+                })
         })
 });
 router.post("/latestitems", (req, res) => {
     Items.find()
-        .exec((err,items) => {
+        .exec((err, items) => {
             if (err) return res.status(400).json({ success: false, err })
-            return res.status(200).json({ success: true ,items})
+            return res.status(200).json({ success: true, items })
         })
 });
 router.post("/getAllCollections", (req, res) => {
     Collection.find()
-        .exec((err,collections) => {
+        .exec((err, collections) => {
             if (err) return res.status(400).json({ success: false, err })
-            return res.status(200).json({ success: true ,collections})
+            return res.status(200).json({ success: true, collections })
         })
 });
 

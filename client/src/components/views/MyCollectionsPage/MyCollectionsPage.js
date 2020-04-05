@@ -6,21 +6,20 @@ import { Col, Card, Row } from 'antd';
 const { Meta } = Card;
 
 
-function MyCollectionsPage() {
+function MyCollectionsPage(props) {
     const [Collections, setCollections] = useState([])
-
-
-
+    let id = props.match.params.userId
+    console.log(props)
     useEffect(() => {
-        Axios.get('/api/collections/getCollections')
+        Axios.get(`/api/collections/getCollections?id=${id}`)
             .then(response => {
 
                 if (response.data.success) {
-
-
                     setCollections(response.data.collections)
-
-
+                }
+                else if (response.data.message) {
+                    alert(response.data.message)
+                    window.location.href = "/"
                 } else {
                     alert('Failed to fectch product datas')
                 }
@@ -48,8 +47,8 @@ function MyCollectionsPage() {
 
 
     return (
-        
-        <div  style={{ width: '75%', margin: '3rem auto' }}>
+
+        <div style={{ width: '75%', margin: '3rem auto' }}>
             <div style={{ textAlign: 'center' }}>
                 <h2>  collections   </h2>
             </div>
@@ -71,7 +70,7 @@ function MyCollectionsPage() {
             }
             <br /><br />
         </div>
-        
+
 
     )
 }

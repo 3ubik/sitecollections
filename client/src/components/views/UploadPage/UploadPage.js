@@ -1,15 +1,34 @@
 import React, { useState } from 'react'
-import { Typography, Button, Form,Input } from 'antd';
+import { Typography, Button, Form, Input } from 'antd';
 import FileUpload from '../../utils/FileUpload'
 import Axios from 'axios';
 
 const { Title } = Typography;
 const { TextArea } = Input;
+const TypesOfTopics = [
+    { key: 1, value: "Alcohol" },
+    { key: 2, value: "Books" },
+    { key: 3, value: "Сigarettes" },
+    { key: 4, value: "Animals" },
+    { key: 5, value: "Music" },
+
+]
 
 function UploadPage(props) {
+    let id = props.match.params.userId
+    let userId = null
+    let admin = false
+    if (props.user.userData) {
+        userId = props.user.userData._id
+        admin = props.user.userData.isAdmin
+        if (id != userId && !admin) {
+            alert("You can't visit this page!")
+            window.location.href = "/"
+        }
+    }
     const [TitleValue, setTitleValue] = useState("")
     const [DescriptionValue, setDescriptionValue] = useState("")
-    const [TopicValue, setTopicValue] = useState("")
+    const [TopicValue, setTopicValue] = useState("Alcohol")
     const [Url, setUrl] = useState([])
 
     const onTitleChange = (event) => {
@@ -26,11 +45,11 @@ function UploadPage(props) {
     }
     const onSubmit = (event) => {
         event.preventDefault();
-        if (!TitleValue || !DescriptionValue || !TopicValue ||!Url) {
+        if (!TitleValue || !DescriptionValue || !TopicValue || !Url) {
             return alert('fill all the fields first!')
         }
         const variables = {
-            writer: props.user.userData._id,
+            writer: id,
             title: TitleValue,
             topic: TopicValue,
             description: DescriptionValue,
@@ -54,22 +73,23 @@ function UploadPage(props) {
                 <Title level={2}> Upload Collection</Title>
             </div>
             <Form onSubmit={onSubmit} >
-                
+
                 <FileUpload refreshFunction={updateImages} />
                 <br />
                 <br />
                 <label>Title</label>
                 <Input
-                    onChange={onTitleChange}              
+                    onChange={onTitleChange}
                 />
                 <br />
                 <br />
-                <label>Topic</label>
-                <Input
-                    onChange={onTopicChange}
-               
+                <label style={{marginRight:10}}>Topic</label>
+                <select  onChange={onTopicChange}>
+                    {TypesOfTopics.map(top => (
+                        <option key={top.key} value={top.value}>{top.value}</option>
 
-                />
+                    ))}
+                </select>
                 <br />
                 <br />
                 <label>Description</label>
